@@ -3,10 +3,10 @@ import logging
 from flask import request, send_file, make_response, send_from_directory
 from flask_restplus import Resource
 #from flanken_api.api.flanken.serializers import search_result
-from flanken_api.api.flanken.parsers import search_arguments, capture_arguments, ploturls_arguments, staticplot_arguments, igv_arguments
+from flanken_api.api.flanken.parsers import search_arguments, capture_arguments, ploturls_arguments, staticplot_arguments, igv_arguments, table_svs_arguments
 from flanken_api.api.restplus import api
 from flask import jsonify
-from flanken_api.api.flanken.business import check_nfs_mount, get_sample_ids, get_sample_design_ids, get_static_frankenplot, get_static_image, get_interactive_plot
+from flanken_api.api.flanken.business import check_nfs_mount, get_sample_ids, get_sample_design_ids, get_static_frankenplot, get_static_image, get_interactive_plot, get_table_svs_header
 from flanken_api.api.flanken.serializers import status_result, dropdownlist, dropdownlist_capture, ploturl_list
 import io
 #import  flanken_api.database.models 
@@ -146,3 +146,27 @@ class IGVTracksFiles(Resource):
         return send_from_directory('/nfs/PROBIO/autoseq-output/P-00356971/PB-P-00356971-CFDNA-03589573-KH20190515-C220190515_PB-P-00356971-N-03589575-KH20190515-C220190515/bams/C2',
                          'PB-P-00356971-CFDNA-03589573-KH-C2-nodups.bam.bai')
         #return send_from_directory('/nfs/PROBIO/autoseq-output/P-00356971/PB-P-00356971-CFDNA-03589573-KH20190515-C220190515_PB-P-00356971-N-03589575-KH20190515-C220190515/bams/C2/', 'PB-P-00356971-CFDNA-03589573-KH-C2-nodups.bam.bai')
+
+
+@ns.route('/table/svs')
+@api.response(200, 'All Structural Variants')
+@api.response(400, '/nfs is not mount locally no data found')
+class TableSvs(Resource):
+    @api.expect(table_svs_arguments, validate=True)
+    def get(self):
+        """
+        Returns All Structural Variants .
+        ```
+        { 'header': {
+                    columnTitle1:{ title: 'ID', type: 'number', editable:false},
+                    columnTitle2:{ title: 'ID', type: 'string', editable:false}
+                    },
+          'data' : [
+                    { columnTitle1: value1,  columnTitle2: value2 }
+          ]
+        }
+        ```
+        """
+        args = table_svs_arguments.parse_args()
+        result, errorcode = get_table_svs_header(args['sdid'], args['capture_id'], args['header'])
+        return result, errorcode

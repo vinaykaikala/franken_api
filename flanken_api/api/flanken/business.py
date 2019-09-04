@@ -3,6 +3,7 @@ import os, io
 from flanken_api.settings import MOUNT_POINT
 from flanken_api.util_notfound import Not_found
 import json
+import csv
 
 
 
@@ -76,18 +77,31 @@ def get_interactive_plot(sample_id, capture_id, plotname):
 
     return {'plot_data': {}, 'status': False}, 400
 
+def generate_headers_table_sv(headers):
+    head_obj = {}
+    for each_head in headers:
+        head_obj[each_head] = {
+            'title':each_head,
+            'type' : 'string',
+            'editable': False
+        }
 
+    return head_obj
 
+def get_table_svs_header(sdid, capture_id, header='true'):
+    "read structural variant file from sdid_annotate_combined_SV.txt and return as json"
+    file_path = MOUNT_POINT + '/' + sdid + '/' + capture_id + '/svs/igv/' +  sdid + '_annotate_combined_SV.txt'
+    data = []
+    if os.path.exists(file_path):
+        with open(file_path, 'r') as f:
+            reader_ponter = csv.DictReader(f, delimiter ='\t')
+            for each_row in reader_ponter:
+                data.append(dict(each_row))
 
+            header = generate_headers_table_sv(data[0].keys())
+            return {'header': header, 'data': data, 'status': True}, 200
 
-
-
-
-
-
-
-
-
-
+    else:
+        return {'header': {}, 'data': [], 'status': False}, 400
 
 
