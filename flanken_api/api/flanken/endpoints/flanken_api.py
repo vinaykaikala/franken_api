@@ -1,12 +1,12 @@
 import logging
-
+from flask import current_app
 from flask import request, send_file, make_response, send_from_directory
 from flask_restplus import Resource
 #from flanken_api.api.flanken.serializers import search_result
-from flanken_api.api.flanken.parsers import search_arguments, capture_arguments, ploturls_arguments, staticplot_arguments, igv_arguments, table_svs_arguments
+from flanken_api.api.flanken.parsers import search_arguments, capture_arguments, ploturls_arguments, staticplot_arguments, igv_arguments, table_svs_arguments, project_arguments, table_igvnav_arguments, igv_save_file_arguments
 from flanken_api.api.restplus import api
 from flask import jsonify
-from flanken_api.api.flanken.business import check_nfs_mount, get_sample_ids, get_sample_design_ids, get_static_frankenplot, get_static_image, get_interactive_plot, get_table_svs_header
+from flanken_api.api.flanken.business import check_nfs_mount, get_sample_ids, get_sample_design_ids, get_static_frankenplot, get_static_image, get_interactive_plot, get_table_svs_header, get_table_igv, save_igvnav_input_file
 from flanken_api.api.flanken.serializers import status_result, dropdownlist, dropdownlist_capture, ploturl_list
 import io
 #import  flanken_api.database.models 
@@ -17,6 +17,7 @@ ns = api.namespace('flanken', description='Interactive Flanken Plots')
 @api.response(200, 'Status of API')
 @api.response(400, '/nfs is not mount locally')
 class FlankenStatus(Resource):
+    @api.expect(project_arguments, validate=True)
     @api.marshal_with(status_result)
     def get(self):
         """
@@ -28,7 +29,9 @@ class FlankenStatus(Resource):
 
         ```
         """
-        status, error_code = check_nfs_mount()
+        args = project_arguments.parse_args()
+        proj_name = args['project_name']
+        status, error_code = check_nfs_mount(current_app.config[proj_name])
         result = {'server_status': True}
 
         if not status:
@@ -42,6 +45,7 @@ class FlankenStatus(Resource):
 @api.response(400, '/nfs is not mount locally no data found')
 class DropdownListSample(Resource):
     @api.marshal_with(dropdownlist)
+    @api.expect(project_arguments, validate=True)
     def get(self):
         """
         Returns List of sample ids for dropdown in UI.
@@ -49,7 +53,9 @@ class DropdownListSample(Resource):
         [sdid1, sdid2,......]
         ```
         """
-        result, errorcode = get_sample_ids()
+        args = project_arguments.parse_args()
+        proj_name = args['project_name']
+        result, errorcode = get_sample_ids(current_app.config[proj_name])
         return result, errorcode
 
 @ns.route('/capture')
@@ -66,7 +72,7 @@ class DropdownListCapture(Resource):
         ```
         """
         args = capture_arguments.parse_args()
-        result, errorcode = get_sample_design_ids(args['sdid'])
+        result, errorcode = get_sample_design_ids(current_app.config[args['project_name']], args['sdid'])
         return result, errorcode
 
 
@@ -84,7 +90,7 @@ class FrankenUrls(Resource):
         ```
         """
         args = ploturls_arguments.parse_args()
-        result, errorcode = get_static_frankenplot(args['sdid'], args['capture_id'])
+        result, errorcode = get_static_frankenplot(current_app.config[args['project_name']], args['project_name'], args['sdid'], args['capture_id'])
         return result, errorcode
 
 
@@ -102,7 +108,7 @@ class FrankenStaticImages(Resource):
         ```
         """
         args = staticplot_arguments.parse_args()
-        result, errorcode = get_static_image(args['sdid'], args['capture_id'], args['imagename'])
+        result, errorcode = get_static_image(current_app.config[args['project_name']], args['sdid'], args['capture_id'], args['imagename'])
         return send_file(result,
                       attachment_filename='frankenplot.png',
                       mimetype='image/png')
@@ -120,13 +126,13 @@ class FlankenPlot(Resource):
         ```
         """
         args = search_arguments.parse_args()
-        result , errocode = get_interactive_plot( args['sdid'], args['capture_id'], args['pname'])
+        result , errocode = get_interactive_plot(current_app.config[args['project_name']], args['sdid'], args['capture_id'], args['pname'])
         return result, errocode
 
 
 
 
-@ns.route('/igvfiles')
+@ns.route('/igvsession')
 @api.response(200, 'Files to load in igv tracks')
 @api.response(400, 'No file found')
 class IGVTracksFiles(Resource):
@@ -168,5 +174,53 @@ class TableSvs(Resource):
         ```
         """
         args = table_svs_arguments.parse_args()
-        result, errorcode = get_table_svs_header(args['sdid'], args['capture_id'], args['header'])
+        result, errorcode = get_table_svs_header(current_app.config[args['project_name']], args['sdid'], args['capture_id'], args['header'])
         return result, errorcode
+
+@ns.route('/table/igv/<string:variant>')
+@api.response(200, 'All Germline and somatic Variants')
+@api.response(400, '/nfs is not mount locally no data found')
+class TableIgv(Resource):
+    @api.expect(table_igvnav_arguments, validate=True)
+    def get(self, variant):
+        """
+        Returns All Structural Variants .
+        ```
+        { 'header': {
+                    columnTitle1:{ title: 'ID', type: 'number', editable:false},
+                    columnTitle2:{ title: 'ID', type: 'string', editable:false}
+                    },
+          'data' : #[
+                    { columnTitle1: value1,  columnTitle2: value2 }
+          ]
+        }
+        ```
+        """
+        args = table_svs_arguments.parse_args()
+        result, errorcode = get_table_igv(variant, current_app.config[args['project_name']], args['sdid'], args['capture_id'], args['header'])
+        return result, errorcode
+
+
+
+@ns.route('/save/igvinput')
+@api.response(200, 'Susscessfully saving igvnav files')
+@api.response(400, '/nfs is not mount locally no data found')
+class SaveIGVFile(Resource):
+    #@api.expect(igv_save_file_arguments, validate=True)
+    def post(self):
+        """
+        Saves IGVnav-input.txt file  .
+        ```
+
+        ```
+        """
+        args = request.json
+
+        result, errorcode = save_igvnav_input_file(args['file_name'], args['data'])
+        return result, errorcode
+
+
+
+
+
+
