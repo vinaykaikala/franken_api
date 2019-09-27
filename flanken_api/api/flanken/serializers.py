@@ -9,3 +9,23 @@ dropdownlist_capture = api.model('Dropdown list for capture ids ',{'sample_captu
 
 ploturl_list = api.model('List the rul for static franken plots', {'image_url': fields.List(list), 'status':fields.Boolean(required=True)})
 
+probio_ref_data = api.model('ProbioBloodReferral', {
+    'crid': fields.String(description='referral id for reach record'),
+    'pnr': fields.String(description='personal number of patient'),
+    'rid': fields.String(description='referral id'),
+    'datum': fields.String(description='date and of entry'),
+    'tid': fields.String(description='tid of sample'),
+    'sign': fields.String(description='binary stautus 1 or 0 '),
+    'countyletter': fields.String(description='hospital code'),
+    'new': fields.String(description='new'),
+    'progression': fields.String(description='state of progression'),
+    'follow_up': fields.String(description='status to follow_up'),
+    'cf_dna1': fields.String(description='proof read 1'),
+    'cf_dna2': fields.String(description='proof read 2'),
+    'cf_dna3': fields.String(description='proof read 3'),
+    'kommentar': fields.String(description='comments of each sample'),
+    'filnamn': fields.String(description='path to sample report in pdf '),
+
+})
+
+probio_ref_data_list = probio_ref_data 

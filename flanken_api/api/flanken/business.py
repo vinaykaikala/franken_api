@@ -1,4 +1,5 @@
 from flanken_api.database import db
+from flanken_api.database.models import ProbioBloodReferral as probio
 import os, io
 #from flanken_api.settings import MOUNT_POINT
 from flask import current_app
@@ -177,5 +178,12 @@ def save_igvnav_input_file(filename, data):
 
         return str("written to file"), 200
 
+    except Exception as e:
+        return str(e), 400
+
+def get_probio_blood_referrals():
+    "Fetch the all the records from probio referral database"
+    try:
+        return probio.query.filter().all(), 200
     except Exception as e:
         return str(e), 400

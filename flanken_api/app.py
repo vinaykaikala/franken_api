@@ -4,6 +4,7 @@ from flask import Flask, Blueprint
 
 from flanken_api import settings
 from flanken_api.api.flanken.endpoints.flanken_api import ns as flanken_namespace
+from flanken_api.api.flanken.endpoints.referral_db_api import ns2 as referral_namespace
 from flanken_api.api.restplus import api
 from flanken_api.database import db
 
@@ -22,6 +23,7 @@ def initialize_app(flask_app):
     blueprint = Blueprint('api', __name__, url_prefix='/api')
     api.init_app(blueprint)
     api.add_namespace(flanken_namespace)
+    api.add_namespace(referral_namespace)
     flask_app.register_blueprint(blueprint)
     db.init_app(flask_app)
 
