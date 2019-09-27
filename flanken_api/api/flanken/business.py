@@ -183,7 +183,8 @@ def save_igvnav_input_file(filename, data):
 
 def get_probio_blood_referrals():
     "Fetch the all the records from probio referral database"
+    header = ['crid','pnr','rid','datum','tid','sign','countyletter','new','progression','follow_up','cf_dna1','cf_dna2','cf_dna3','kommentar','filnamn']
     try:
-        return probio.query.filter().all(), 200
+        return {'status': True, 'data': probio.query.filter().all(), 'header': generate_headers_ngx_table(header), 'error': '' }, 200
     except Exception as e:
-        return str(e), 400
+        return {'status': True, 'data': [], 'header': header, 'error': str(e) }, 400
