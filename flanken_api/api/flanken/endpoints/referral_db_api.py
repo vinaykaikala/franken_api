@@ -53,6 +53,11 @@ class PsffReferral(Resource):
         ```
         """
         #result, errorcode = get_probio_blood_referrals()
-        return 'Coming soon....', 200
+        return str(request.environ['SERVER_NAME']), 200
+
+
+
+
+
 
 
