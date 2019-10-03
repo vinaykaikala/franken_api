@@ -1,5 +1,6 @@
 from flanken_api.database import db
 from flanken_api.database.models import ProbioBloodReferral as probio
+from flanken_api.database.models import PSFFBloodReferral as psff
 import os, io
 #from flanken_api.settings import MOUNT_POINT
 from flask import current_app
@@ -195,5 +196,13 @@ def get_probio_blood_referrals():
     header = ['crid','pnr','rid','datum','tid','sign','countyletter','new','progression','follow_up','cf_dna1','cf_dna2','cf_dna3','kommentar','filnamn']
     try:
         return {'status': True, 'data': probio.query.filter().all(), 'header': generate_headers_ngx_table(header), 'error': '' }, 200
+    except Exception as e:
+        return {'status': True, 'data': [], 'header': header, 'error': str(e) }, 400
+
+def get_psff_blood_referrals():
+    "Fetch the all the records from probio referral database"
+    header = ['crid','rid','datum','tid','sign','blood1','blood2','blood3','blood4','comment', 'filnamn', 'cdk']
+    try:
+        return {'status': True, 'data': psff.query.filter().all(), 'header': generate_headers_ngx_table(header), 'error': '' }, 200
     except Exception as e:
         return {'status': True, 'data': [], 'header': header, 'error': str(e) }, 400

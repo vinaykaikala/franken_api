@@ -28,6 +28,25 @@ probio_ref_data = api.model('ProbioBloodReferral', {
 
 })
 
+psff_ref_data = api.model('PsffBloodReferral', {
+    'crid': fields.String(description='referral id for reach record'),
+    'rid': fields.String(description='referral id'),
+    'datum': fields.String(description='date and of entry'),
+    'tid': fields.String(description='tid of sample'),
+    'sign': fields.String(description='binary stautus 1 or 0 '),
+    'blood1': fields.String(description='proof read 1'),
+    'blood2': fields.String(description='proof read 2'),
+    'blood3': fields.String(description='proof read 3'),
+    'blood4': fields.String(description='proof read 4'),
+    'comment': fields.String(description='comments on case'),
+    'filnamn': fields.String(description='path to sample report in pdf '),
+    'cdk': fields.String(description='cdk id')
+})
+
 header = api.model('Probio header', {'key':fields.String(description='Column name') , 'title': fields.String(description='Column display name')})
 #probio_ref_data_list = api.model('Referral DB Data', { 'status':fields.Boolean(required=True), 'data': fields.List(fields.Nested(probio_ref_data)), 'header': fields.List(fields.Nested(header)), 'error':fields.String() }
 probio_ref_data_list = api.model('Referral DB Data', { 'status':fields.Boolean(required=True), 'data': fields.List(fields.Nested(probio_ref_data)), 'header': fields.List(fields.Nested(header)), 'error': fields.String()})
+
+
+header_psff = api.model('Psff header', {'key':fields.String(description='Column name') , 'title': fields.String(description='Column display name')})
+psff_ref_data_list = api.model('Referral DB Data', { 'status':fields.Boolean(required=True), 'data': fields.List(fields.Nested(psff_ref_data)), 'header': fields.List(fields.Nested(header_psff)), 'error': fields.String()})
