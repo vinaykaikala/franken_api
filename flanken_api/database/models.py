@@ -25,7 +25,6 @@ class ProbioBloodReferral(pssql.Model):
 class PSFFBloodReferral(pssql.Model):
     __tablename__ = "psff_bloodreferrals"
     crid = pssql.Column(pssql.Integer, primary_key=True, nullable=False)
-    pnr  = pssql.Column(pssql.String, nullable=False)
     rid  = pssql.Column(pssql.String, nullable=False)
     datum = pssql.Column(pssql.Date, nullable=False)
     tid  = pssql.Column(pssql.String, nullable=False)
