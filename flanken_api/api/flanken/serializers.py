@@ -50,3 +50,6 @@ probio_ref_data_list = api.model('Referral DB Data', { 'status':fields.Boolean(r
 
 header_psff = api.model('Psff header', {'key':fields.String(description='Column name') , 'title': fields.String(description='Column display name')})
 psff_ref_data_list = api.model('Referral DB Data', { 'status':fields.Boolean(required=True), 'data': fields.List(fields.Nested(psff_ref_data)), 'header': fields.List(fields.Nested(header_psff)), 'error': fields.String()})
+
+
+referral_db_out =  api.model('Referral DB update', { 'status':fields.Boolean(required=True), 'error': fields.String()})
