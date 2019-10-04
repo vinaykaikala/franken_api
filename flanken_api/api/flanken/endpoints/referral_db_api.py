@@ -2,9 +2,9 @@ import logging
 from flask import current_app
 from flask import request, send_file, make_response, send_from_directory
 from flask_restplus import Resource
-#from flanken_api.api.flanken.parsers import 
+from flanken_api.api.flanken.parsers import referral_update_arguments
 from flanken_api.api.restplus import api
-from flanken_api.api.flanken.business import  get_probio_blood_referrals, get_psff_blood_referrals
+from flanken_api.api.flanken.business import  get_probio_blood_referrals, get_psff_blood_referrals, update_referrals
 from flanken_api.api.flanken.serializers import probio_ref_data_list, psff_ref_data_list
 
 log = logging.getLogger(__name__)
@@ -54,6 +54,24 @@ class PsffReferral(Resource):
         """
         result, errorcode = get_psff_blood_referrals()
         return result, errorcode
+
+
+@ns2.route('/update')
+@api.response(200, 'Fetched all psff referals')
+@api.response(400, '/nfs is not mount locally no data found')
+class ReferralUpdate(Resource):
+    @api.expect(referral_update_arguments, validate=True)
+    def get(self):
+        """
+        Fetch all psff referrals records
+        ```
+
+        ```
+        """
+        args = referral_update_arguments.parse_args()
+        result, errorcode = update_referrals(args['db_name'])
+        return result, errorcode
+
 
 
 

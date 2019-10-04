@@ -206,3 +206,41 @@ def get_psff_blood_referrals():
         return {'status': True, 'data': psff.query.filter().all(), 'header': generate_headers_ngx_table(header), 'error': '' }, 200
     except Exception as e:
         return {'status': True, 'data': [], 'header': header, 'error': str(e) }, 400
+
+
+def update_referrals(db_name):
+    "Update the referrals data from ftp into postgres db using referral-manager tool"
+    referral_conf = {
+        'fetch': {
+            'common': 'refman --sentry-login /nfs/PROBIO/referraldb/.sentrylogin fetch --referrals-login /nfs/PROBIO/referraldb/referral-manager_conf_files/login.json',
+            'probio': ' --local-data-dir /nfs/PROBIO/referraldb/remote_files --remote-data-dir /ProBio2/Scannade_remisser',
+            'psff': ' --local-data-dir /nfs/CLINSEQ/PSFF/referraldb/remote_files --remote-data-dir /PSFF/Scannade_remisser',
+            'psff_log': '/nfs/CLINSEQ/PSFF/referraldb/referral_db_fetch.log',
+            'probio_log': 'nfs/PROBIO/referraldb/referral_db_fetch.log'
+        },
+        'db_import':{
+            'common' : 'refman --sentry-login /nfs/PROBIO/referraldb/.sentrylogin dbimport --dbcred /nfs/PROBIO/referraldb/referral-manager_conf_files/config.json',
+            'probio': ' --local-data-dir /nfs/PROBIO/referraldb/remote_files/csv --referral-type ProbioBloodReferral',
+            'psff': '--local-data-dir /nfs/CLINSEQ/PSFF/referraldb/remote_files/csv --referral-type PsffBloodReferral',
+            'psff_log': '/nfs/CLINSEQ/PSFF/referraldb/referral_db_dbimport.log',
+            'probio_log': 'nfs/PROBIO/referraldb/referral_db_dbimport.log'
+
+        }
+    }
+    try:
+        logfile_fetch = open(referral_conf['fetch'][db_name+'_log'], 'w')
+        logfile_dbimport = open(referral_conf['db_import'][db_name+'_log'], 'w')
+        cmd_fetch = referral_conf['fetch']['common'] + referral_conf['fetch'][db_name]
+        cmd_dbimport = referral_conf['db_import']['common'] + referral_conf['db_import'][db_name]
+        proc = subprocess.check_call(cmd_fetch, stdout=logfile_fetch, stderr=logfile_fetch)
+        proc = subprocess.check_call(cmd_dbimport, stdout=logfile_dbimport, stderr=logfile_dbimport)
+        logfile_fetch.close()
+        logfile_dbimport.close()
+        return {'status': True, 'error': ''}, 200
+    except subprocess.CalledProcessError as err:
+        logfile_fetch.close()
+        logfile_dbimport.close()
+        return {'status': False, 'error': err}, 400
+
+
+
