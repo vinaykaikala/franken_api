@@ -216,14 +216,14 @@ def update_referrals(db_name):
             'probio': ' --local-data-dir /nfs/PROBIO/referraldb/remote_files --remote-data-dir /ProBio2/Scannade_remisser',
             'psff': ' --local-data-dir /nfs/CLINSEQ/PSFF/referraldb/remote_files --remote-data-dir /PSFF/Scannade_remisser',
             'psff_log': '/nfs/CLINSEQ/PSFF/referraldb/referral_db_fetch.log',
-            'probio_log': 'nfs/PROBIO/referraldb/referral_db_fetch.log'
+            'probio_log': '/nfs/PROBIO/referraldb/referral_db_fetch.log'
         },
         'db_import':{
             'common' : 'refman --sentry-login /nfs/PROBIO/referraldb/.sentrylogin dbimport --dbcred /nfs/PROBIO/referraldb/referral-manager_conf_files/config.json',
             'probio': ' --local-data-dir /nfs/PROBIO/referraldb/remote_files/csv --referral-type ProbioBloodReferral',
             'psff': '--local-data-dir /nfs/CLINSEQ/PSFF/referraldb/remote_files/csv --referral-type PsffBloodReferral',
             'psff_log': '/nfs/CLINSEQ/PSFF/referraldb/referral_db_dbimport.log',
-            'probio_log': 'nfs/PROBIO/referraldb/referral_db_dbimport.log'
+            'probio_log': '/nfs/PROBIO/referraldb/referral_db_dbimport.log'
 
         }
     }
