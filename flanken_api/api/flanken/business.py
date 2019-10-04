@@ -232,8 +232,8 @@ def update_referrals(db_name):
         logfile_dbimport = open(referral_conf['db_import'][db_name+'_log'], 'w')
         cmd_fetch = referral_conf['fetch']['common'] + referral_conf['fetch'][db_name]
         cmd_dbimport = referral_conf['db_import']['common'] + referral_conf['db_import'][db_name]
-        proc = subprocess.check_call(cmd_fetch, stdout=logfile_fetch, stderr=logfile_fetch)
-        proc = subprocess.check_call(cmd_dbimport, stdout=logfile_dbimport, stderr=logfile_dbimport)
+        proc = subprocess.check_call(cmd_fetch, stdout=logfile_fetch, stderr=logfile_fetch, shell=True)
+        proc = subprocess.check_call(cmd_dbimport, stdout=logfile_dbimport, stderr=logfile_dbimport, shell=True)
         logfile_fetch.close()
         logfile_dbimport.close()
         return {'status': True, 'error': ''}, 200
