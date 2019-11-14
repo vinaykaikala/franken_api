@@ -13,27 +13,18 @@ from flask import jsonify
 import subprocess
 
 def run_cmd(cmd):
+    "Run external commands"
     return subprocess.check_output(cmd, shell=True).decode('utf-8')
-
-
-
-
 
 def check_nfs_mount(file_path=None):
     "Check anchorage is mount to /nfs"
-
-
     if os.path.exists(file_path) and len(file_path) > 0:
         return  True, 200
     else :
         return False, 400
 
-
-
 def get_sample_design_ids(project_path, sample_id):
     "get all sample design ids for given sample id"
-
-
     capture_dir = project_path + '/' + sample_id
     status, error =  check_nfs_mount(capture_dir)
     if not status:
@@ -51,9 +42,7 @@ def get_sample_design_ids(project_path, sample_id):
 def get_sample_ids(project_path):
     "Get all probio samples"
     status, error = check_nfs_mount(project_path)
-
     if status:
-
         files = list(filter(lambda x: x.startswith('P-'), os.listdir(project_path)))
         files.sort(key=lambda x : os.path.getmtime(project_path + '/' + x), reverse=True)
         return {'sidis': files, 'status': True}, error
@@ -129,10 +118,15 @@ def get_table_svs_header(project_path, sdid, capture_id, header='true'):
 
             #header = generate_headers_table_sv(data[0].keys())
             header = generate_headers_ngx_table(data[0].keys())
-            return {'header': header, 'data': data, 'status': True}, 200
+            #Add additional columns to SV  [CALL(True | False):  TYPE:(Somatic| germline) and comment columns]
+            header = [{'key': 'CALL', 'title': 'CALL'},
+                            {'key': 'TYPE', 'title': 'TYPE'},
+                            {'key': 'SECONDHIT', 'title': 'SECONDHIT'},
+                            {'key': 'COMMENT', 'title': 'COMMENT'}] + header
+            return {'header': header, 'data': data, 'filename': file_path, 'status': True}, 200
 
     else:
-        return {'header': [], 'data': [], 'status': False}, 400
+        return {'header': [], 'data': [], 'filename': '', 'status': False}, 400
 
 def get_table_igv(variant_type, project_path, sdid, capture_id, header='true'):
     "read  variant file for given sdid and return as json"

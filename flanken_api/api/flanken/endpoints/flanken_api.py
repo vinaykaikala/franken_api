@@ -209,12 +209,11 @@ class SaveIGVFile(Resource):
     #@api.expect(igv_save_file_arguments, validate=True)
     def post(self):
         """
-        Saves IGVnav-input.txt file  .
+        Saves IGVnav-input.txt file and structural variant file .
         ```
 
         ```
         """
         args = request.json
-
         result, errorcode = save_igvnav_input_file(args['file_name'], args['data'])
         return result, errorcode
