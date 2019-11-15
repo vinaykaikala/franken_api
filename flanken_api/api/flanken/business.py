@@ -106,6 +106,29 @@ def generate_headers_ngx_table(headers):
           columns.append({ 'key': each_head ,'title':each_head})
     return columns
 
+
+def get_table_qc_header(project_path, sdid, capture_id, header='true'):
+    "read qc file from qc_overview.txt and return as json"
+    data = []
+    file_path = project_path + '/' + sdid + '/' + capture_id + '/' + 'qc/'
+    qc_filename = file_path + list(filter(lambda x: x.endswith('.qc_overview.txt')
+                                                    and not x.startswith('.')
+                                                    and not x.endswith('.out'), os.listdir(file_path)))[0]
+    if os.path.exists(qc_filename):
+        with open(qc_filename, 'r') as f:
+            reader_ponter = csv.DictReader(f, delimiter ='\t')
+            for each_row in reader_ponter:
+                data.append(dict(each_row))
+            header = generate_headers_ngx_table(data[0].keys())
+            header = [ {'key': 'PURITY', 'title': 'PURITY'},
+                       {'key': 'PLOIDY', 'title': 'PLOIDY'}
+                      ] + header
+            return {'header': header, 'data': data, 'filename': qc_filename, 'status': True}, 200
+
+    else:
+        return {'header': [], 'data': [], 'filename': '', 'status': False}, 400
+
+
 def get_table_svs_header(project_path, sdid, capture_id, header='true'):
     "read structural variant file from sdid_annotate_combined_SV.txt and return as json"
     file_path = project_path + '/' + sdid + '/' + capture_id + '/svs/igv/' +  sdid + '_annotate_combined_SV.txt'

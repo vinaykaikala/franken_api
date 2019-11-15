@@ -39,6 +39,7 @@ table_svs_arguments.add_argument('header', choices=('true', 'false'), default='t
 
 table_igvnav_arguments = table_svs_arguments.copy()
 
+table_qc_arguments = table_svs_arguments.copy()
 
 igv_save_file_arguments = reqparse.RequestParser()
 igv_save_file_arguments.add_argument('file_name',  required=True, help="igvnav-input.txt as File Name  ")
