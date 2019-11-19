@@ -120,8 +120,9 @@ def get_table_qc_header(project_path, sdid, capture_id, header='true'):
             for each_row in reader_ponter:
                 data.append(dict(each_row))
             header = generate_headers_ngx_table(data[0].keys())
-            header = [ {'key': 'PURITY', 'title': 'PURITY'},
-                       {'key': 'PLOIDY', 'title': 'PLOIDY'}
+            if not any(list(map(lambda x : x in ['PURITY', 'PLOIDY'], data[0].keys()))):
+                header = [ {'key': 'PURITY', 'title': 'PURITY'},
+                           {'key': 'PLOIDY', 'title': 'PLOIDY'}
                       ] + header
             return {'header': header, 'data': data, 'filename': qc_filename, 'status': True}, 200
 
@@ -142,10 +143,12 @@ def get_table_svs_header(project_path, sdid, capture_id, header='true'):
             #header = generate_headers_table_sv(data[0].keys())
             header = generate_headers_ngx_table(data[0].keys())
             #Add additional columns to SV  [CALL(True | False):  TYPE:(Somatic| germline) and comment columns]
-            header = [{'key': 'CALL', 'title': 'CALL'},
+            if not any(list(map(lambda x: x in ['CALL', 'TYPE', 'SECONDHIT', 'COMMENT'], data[0].keys()))):
+                header = [{'key': 'CALL', 'title': 'CALL'},
                             {'key': 'TYPE', 'title': 'TYPE'},
                             {'key': 'SECONDHIT', 'title': 'SECONDHIT'},
                             {'key': 'COMMENT', 'title': 'COMMENT'}] + header
+
             return {'header': header, 'data': data, 'filename': file_path, 'status': True}, 200
 
     else:
