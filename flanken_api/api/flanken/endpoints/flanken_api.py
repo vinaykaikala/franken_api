@@ -3,10 +3,10 @@ from flask import current_app
 from flask import request, send_file, make_response, send_from_directory
 from flask_restplus import Resource
 #from flanken_api.api.flanken.serializers import search_result
-from flanken_api.api.flanken.parsers import search_arguments, capture_arguments, ploturls_arguments, staticplot_arguments, igv_arguments, table_svs_arguments, project_arguments, table_igvnav_arguments, igv_save_file_arguments, table_qc_arguments
+from flanken_api.api.flanken.parsers import pdf_arguments, search_arguments, capture_arguments, ploturls_arguments, staticplot_arguments, igv_arguments, table_svs_arguments, project_arguments, table_igvnav_arguments, igv_save_file_arguments, table_qc_arguments
 from flanken_api.api.restplus import api
 from flask import jsonify
-from flanken_api.api.flanken.business import check_nfs_mount, get_sample_ids, get_sample_design_ids, get_static_frankenplot, get_static_image, get_interactive_plot, get_table_svs_header, get_table_igv, save_igvnav_input_file, get_table_qc_header
+from flanken_api.api.flanken.business import pdfs_files, check_nfs_mount, get_sample_ids, get_sample_design_ids, get_static_frankenplot, get_static_image, get_interactive_plot, get_table_svs_header, get_table_igv, save_igvnav_input_file, get_table_qc_header
 from flanken_api.api.flanken.serializers import status_result, dropdownlist, dropdownlist_capture, ploturl_list
 import io
 #import  flanken_api.database.models 
@@ -241,3 +241,20 @@ class SaveIGVFile(Resource):
         args = request.json
         result, errorcode = save_igvnav_input_file(args['file_name'], args['data'])
         return result, errorcode
+
+# pdf endpoints
+@ns.route('/pdf/<string:variant>')
+@api.response(200, 'PDF file')
+@api.response(400, '/nfs is not mount locally no data found')
+class PDFCalls(Resource):
+    @api.representation('application/pdf')
+    @api.expect(pdf_arguments, validate=True)
+    def get(self, variant):
+        """
+        Returns PDF files .
+        """
+        args = pdf_arguments.parse_args()
+        result, errorcode = pdfs_files(variant, current_app.config[args['project_name']], args['sdid'], args['capture_id'])
+        return send_file(result,
+                      attachment_filename=variant+'.pdf',
+                      mimetype='application/pdf')

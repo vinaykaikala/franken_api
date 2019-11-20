@@ -263,4 +263,16 @@ def update_referrals(db_name):
         return {'status': False, 'error': err}, 400
 
 
+def pdfs_files(variant_type, project_path, sdid, capture_id):
 
+    if variant_type not in ['qc', 'purecn']:
+        return '', 400
+
+    file_path = project_path + '/' + sdid + '/' + capture_id + '/' + variant_type + '/'
+    pdf_file = list(filter(lambda x: (re.match('[-\w]+-CFDNA-[A-Za-z0-9-]+.pdf', x) or x.endswith('.qc_overview.pdf')) and not x.startswith('.') and not x.endswith('.out'),
+                               os.listdir(file_path)))[0]
+    if os.path.exists(file_path):
+        file_path = file_path + '/' + pdf_file
+        return file_path, 200
+
+    return file_path, 400

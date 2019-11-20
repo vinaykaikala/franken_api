@@ -46,7 +46,9 @@ igv_save_file_arguments.add_argument('file_name',  required=True, help="igvnav-i
 igv_save_file_arguments.add_argument('data',  type=str, required=True, help="Jsondata")
 
 
-referral_update_arguments  = reqparse.RequestParser()
+pdf_arguments = common_arguments.copy()
+
+referral_update_arguments = reqparse.RequestParser()
 referral_update_arguments.add_argument('db_name', choices=('probio', 'psff'), required=True,
                               help="provide db name to updae the referral db for probio / psff")
 
