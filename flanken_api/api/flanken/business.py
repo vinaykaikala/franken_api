@@ -1,6 +1,9 @@
 from flanken_api.database import db
 from flanken_api.database.models import ProbioBloodReferral as probio
 from flanken_api.database.models import PSFFBloodReferral as psff
+from flanken_api.database.models import TableIgvGermline as igv_germline_table
+from flanken_api.database.models import TableIgvSomatic as igv_somatic_table
+from flanken_api.database.models import TableSVS as svs_table
 import os, io
 #from flanken_api.settings import MOUNT_POINT
 from flask import current_app
@@ -276,3 +279,56 @@ def pdfs_files(variant_type, project_path, sdid, capture_id):
         return file_path, 200
 
     return file_path, 400
+
+def post_curation_igv_germline():
+    obj_germline = igv_germline_table({})
+    db.session.add(obj_germline)
+    db.session.commit()
+    pass
+
+def get_curation_igv_germline():
+    try:
+        header = ['PROJECT_ID', 'SDID', 'CAPTURE_ID', 'CHROM', 'START', 'END',
+                  'REF', 'ALT', 'CALL', 'TAG', 'NOTES', 'GENE', 'IMPACT', 'CONSEQUENCE',
+                  'HGVSp', 'N_DP', 'N_ALT', 'N_VAF', 'CLIN_SIG', 'gnomAD', 'BRCAEx', 'OncoKB']
+        try:
+            return {'status': True, 'data': igv_germline_table.query.filter().all(),
+                    'header': generate_headers_ngx_table(header),
+                    'error': ''}, 200
+        except Exception as e:
+            return {'status': True, 'data': [], 'header': header, 'error': str(e)}, 400
+
+    except Exception as e:
+        return "Error :" + str(e), 400
+
+def get_curation_igv_somatic():
+    try:
+        header = ['PROJECT_ID', 'SDID', 'CAPTURE_ID', "Chromosome", 'Start', 'Stop',
+                    'Reference', 'Variant', 'Call', 'Tags', 'Notes', 'GENE', 'IMPACT',
+                  'CONSEQUENCE', 'HGVSp', 'T_DP', 'T_ALT', 'T_VAF', 'N_DP', 'N_ALT', 'N_VAF',
+                  'CLIN_SIG', 'gnomAD', 'BRCAEx', 'OncoKB']
+        try:
+            return {'status': True, 'data': igv_somatic_table.query.filter().all(),
+                    'header': generate_headers_ngx_table(header),
+                    'error': ''}, 200
+        except Exception as e:
+            return {'status': True, 'data': [], 'header': header, 'error': str(e)}, 400
+
+    except Exception as e:
+        return "Error :" + str(e), 400
+
+def get_curation_svs():
+    try:
+        header = ['PROJECT_ID', 'CAPTURE_ID', 'SDID', 'CHROM_A', 'START_A', 'END_A', 'CHROM_B', 'START_B',
+                  'END_B', 'SVTYPE', 'SV_LENGTH', 'SUPPORT_READS', 'TOOL', 'SAMPLE', 'GENE_A', 'IN_DESIGN_A', 'GENE_B',
+                  'IN_DESIGN_B', 'GENE_A-GENE_B-sorted', 'CALL', 'TYPE', 'SECONDHIT', 'COMMENT',]
+        try:
+            return {'status': True, 'data': svs_table.query.filter().all(),
+                    'header': generate_headers_ngx_table(header),
+                    'error': ''}, 200
+        except Exception as e:
+            return {'status': True, 'data': [], 'header': header, 'error': str(e)}, 400
+
+    except Exception as e:
+        return "Error :" + str(e), 400
+

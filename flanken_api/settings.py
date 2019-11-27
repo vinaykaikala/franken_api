@@ -11,7 +11,10 @@ RESTPLUS_ERROR_404_HELP = False
 
 # SQLAlchemy settings
 SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']  #'mysql+pymysql://username@host/database_name'
+SQLALCHEMY_BINDS = os.environ['CURATION_DB_URL']
+
 SQLALCHEMY_TRACK_MODIFICATIONS = False
+
 
 #path to flanken json files
 MOUNT_POINT_PROBIO = '/nfs/PROBIO/autoseq-output'

@@ -53,3 +53,102 @@ psff_ref_data_list = api.model('Referral DB Data', { 'status':fields.Boolean(req
 
 
 referral_db_out =  api.model('Referral DB update', { 'status':fields.Boolean(required=True), 'error': fields.String()})
+
+curation_germline = api.model('IGV Germline', {
+        'id': fields.String(description='Project ID'),
+        'PROJECT_ID' : fields.String(description='Project ID'),
+        'SDID' : fields.String(description='Sample ID'),
+        'CAPTURE_ID' : fields.String(description='Capture ID'),
+        'CHROM': fields.String(description='Chromosome '),
+        'START':  fields.String(description='Start position'),
+        'END': fields.String(description='End'),
+        'REF': fields.String(description=''),
+        'ALT': fields.String(description=''),
+        'CALL':fields.String(description=''),
+        'TAG' : fields.String(description=''),
+        'NOTES': fields.String(description=''),
+        'GENE': fields.String(description=''),
+        'IMPACT': fields.String(description=''),
+        'CONSEQUENCE' : fields.String(description=''),
+        'HGVSp': fields.String(description=''),
+        'N_DP' : fields.String(description=''),
+        'N_ALT' : fields.String(description=''),
+        'N_VAF' : fields.String(description=''),
+        'CLIN_SIG' : fields.String(description=''),
+        'gnomAD': fields.String(description=''),
+        'BRCAEx' : fields.String(description=''),
+        'OncoKB' : fields.String(description='')
+})
+curation_somatic = api.model('IGV Somatic', {
+        'id': fields.String(description='Project ID'),
+        'PROJECT_ID' : fields.String(description='Project ID'),
+        'SDID' : fields.String(description='Sample ID'),
+        'CAPTURE_ID' : fields.String(description='Capture ID'),
+        'Chromosome': fields.String(description='Chromosome '),
+        'Start':  fields.String(description='Start position'),
+        'Stop': fields.String(description='End'),
+        'Reference': fields.String(description=''),
+        'Variant': fields.String(description=''),
+        'Call':fields.String(description=''),
+        'Tags' : fields.String(description=''),
+        'Notes': fields.String(description=''),
+        'GENE': fields.String(description=''),
+        'IMPACT': fields.String(description=''),
+        'CONSEQUENCE' : fields.String(description=''),
+        'HGVSp': fields.String(description=''),
+        'T_DP': fields.String(description=''),
+        'T_ALT': fields.String(description=''),
+        'T_VAF' : fields.String(description=''),
+        'N_DP' : fields.String(description=''),
+        'N_ALT' : fields.String(description=''),
+        'N_VAF' : fields.String(description=''),
+        'CLIN_SIG' : fields.String(description=''),
+        'gnomAD': fields.String(description=''),
+        'BRCAEx' : fields.String(description=''),
+        'OncoKB' : fields.String(description='')
+})
+
+curation_svs = api.model('SVS', {
+        'id': fields.String(description=' ID'),
+        'PROJECT_ID' : fields.String(description='Project ID'),
+        'SDID' : fields.String(description='Sample ID'),
+        'CAPTURE_ID' : fields.String(description='Capture ID'),
+        'CHROM_A': fields.String(description='Chromosome '),
+        'START_A':  fields.String(description='Start position'),
+        'END_A': fields.String(description='End'),
+        'CHROM_B': fields.String(description=''),
+        'START_B': fields.String(description=''),
+        'END_B':fields.String(description=''),
+        'SVTYPE' : fields.String(description=''),
+        'SV_LENGTH': fields.String(description=''),
+        'SUPPORT_READS': fields.String(description=''),
+        'TOOL': fields.String(description=''),
+        'SAMPLE' : fields.String(description=''),
+        'GENE_A': fields.String(description=''),
+        'IN_DESIGN_A': fields.String(description=''),
+        'GENE_B': fields.String(description=''),
+        'IN_DESIGN_B' : fields.String(description=''),
+        'GENE_A-GENE_B-sorted' : fields.String(description=''),
+        'CALL' : fields.String(description=''),
+        'TYPE' : fields.String(description=''),
+        'SECONDHIT' : fields.String(description=''),
+        'COMMENT': fields.String(description='')
+})
+
+header_curation = api.model('Curation Header', {'key':fields.String(description='Column name') ,
+                                        'title': fields.String(description='Column display name')})
+
+germline_data_list = api.model('Curation Germline DB Data', { 'status':fields.Boolean(required=True),
+                                                     'data': fields.List(fields.Nested(curation_germline)),
+                                                     'header': fields.List(fields.Nested(header_curation)),
+                                                     'error': fields.String()})
+
+somatic_data_list = api.model('Curation Somatic DB Data', { 'status':fields.Boolean(required=True),
+                                                     'data': fields.List(fields.Nested(curation_somatic)),
+                                                     'header': fields.List(fields.Nested(header_curation)),
+                                                     'error': fields.String()})
+
+svs_data_list = api.model('Curation SVS DB Data', { 'status':fields.Boolean(required=True),
+                                                     'data': fields.List(fields.Nested(curation_svs)),
+                                                     'header': fields.List(fields.Nested(header_curation)),
+                                                     'error': fields.String()})
