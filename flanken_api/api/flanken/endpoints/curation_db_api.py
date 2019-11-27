@@ -8,7 +8,7 @@ from flanken_api.api.flanken.business import  get_curation_igv_germline, get_cur
 from flanken_api.api.flanken.serializers import curation_germline, germline_data_list, somatic_data_list, svs_data_list
 
 log = logging.getLogger(__name__)
-ns3 = api.namespace('curation DB', description='Curation Database API')
+ns3 = api.namespace('curation', description='Curation Database API')
 
 @ns3.route('/')
 @api.response(200, 'Check API status')
@@ -24,7 +24,7 @@ class CurationStatus(Resource):
         return 'Working', 200
 
 
-@ns3.route('/curation/igv/germline')
+@ns3.route('/igv/germline')
 @api.response(200, 'Success')
 @api.response(400, '/nfs is not mount locally no data found')
 class CurationIgvGermline(Resource):
@@ -50,7 +50,7 @@ class CurationIgvGermline(Resource):
         result, errorcode = get_curation_igv_germline()
         return result, errorcode
 
-@ns3.route('/curation/igv/somatic')
+@ns3.route('/igv/somatic')
 @api.response(200, 'Success')
 @api.response(400, '/nfs is not mount locally no data found')
 class CurationIgvSomatic(Resource):
@@ -76,7 +76,7 @@ class CurationIgvSomatic(Resource):
 
         return '', 200
 
-@ns3.route('/curation/svs')
+@ns3.route('/svs')
 @api.response(200, 'Success')
 @api.response(400, '/nfs is not mount locally no data found')
 class CurationSVS(Resource):
