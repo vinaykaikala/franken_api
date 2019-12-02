@@ -78,7 +78,7 @@ class CurationIgvSomatic(Resource):
         result, errorcode = post_curation(dict(args), 'somatic')
         return result, errorcode
 
-@ns3.route('/svs')
+@ns3.route('/igv/svs')
 @api.response(200, 'Success')
 @api.response(400, '/nfs is not mount locally no data found')
 class CurationSVS(Resource):
