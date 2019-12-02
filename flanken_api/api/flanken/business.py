@@ -4,6 +4,7 @@ from flanken_api.database.models import PSFFBloodReferral as psff
 from flanken_api.database.models import TableIgvGermline as igv_germline_table
 from flanken_api.database.models import TableIgvSomatic as igv_somatic_table
 from flanken_api.database.models import TableSVS as svs_table
+from sqlalchemy import and_
 import os, io
 #from flanken_api.settings import MOUNT_POINT
 from flask import current_app
@@ -280,11 +281,62 @@ def pdfs_files(variant_type, project_path, sdid, capture_id):
 
     return file_path, 400
 
-def post_curation_igv_germline():
-    obj_germline = igv_germline_table({})
-    db.session.add(obj_germline)
-    db.session.commit()
-    pass
+def check_curation_germline_record(table, record):
+    return bool(table.query.filter(table.PROJECT_ID==record['PROJECT_ID'],
+                                   table.SDID == record['SDID'],
+                                   table.CAPTURE_ID == record['CAPTURE_ID'],
+                                   table.CHROM == record['CHROM'],
+                                   table.START == record['START'],
+                                   table.END == record['END'],
+                                   table.REF == record['REF'],
+                                   table.ALT == record['ALT']
+                                   ).first())
+
+def check_curation_somatic_record(table, record):
+    return bool(table.query.filter(table.PROJECT_ID==record['PROJECT_ID'],
+                                   table.SDID == record['SDID'],
+                                   table.CAPTURE_ID == record['CAPTURE_ID'],
+                                   table.Chromosome == record['Chromosome'],
+                                   table.Start == record['Start'],
+                                   table.Stop == record['Stop'],
+                                   table.Reference == record['Reference'],
+                                   table.Variant == record['Variant']
+                                   ).first())
+
+
+def check_curation_svs_record(table, record):
+    return bool(table.query.filter(table.PROJECT_ID==record['PROJECT_ID'],
+                                   table.SDID == record['SDID'],
+                                   table.CAPTURE_ID == record['CAPTURE_ID'],
+                                   table.CHROM_A == record['CHROM_A'],
+                                   table.START_A == record['START_A'],
+                                   table.END_A == record['END_A'],
+                                   table.CHROM_B == record['CHROM_B'],
+                                   table.START_B == record['START_B']
+                                   ).first())
+
+def post_curation(record, table_name):
+    try:
+        tables_dict = {
+            'germline': igv_germline_table,
+            'somatic': igv_somatic_table,
+            'svs': svs_table
+        }
+        func_dict = {
+            'germline': check_curation_germline_record,
+            'somatic': check_curation_somatic_record,
+            'svs': check_curation_svs_record
+        }
+
+        if not func_dict[table_name](tables_dict[table_name], record ):
+            obj_germline = tables_dict[table_name](record)
+            db.session.add(obj_germline)
+            db.session.commit()
+            return {'status': True, 'error': ''}, 200
+        else:
+            return {'status': False, 'error': 'Record Exists...'}, 400
+    except Exception as e :
+        return {'status': False, 'error': str(e)}, 400
 
 def get_curation_igv_germline():
     try:

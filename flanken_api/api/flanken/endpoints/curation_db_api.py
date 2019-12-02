@@ -4,7 +4,7 @@ from flask import request, send_file, make_response, send_from_directory
 from flask_restplus import Resource
 from flanken_api.api.flanken.parsers import curation_germline_arguments, curation_somatic_arguments, curation_svs_arguments
 from flanken_api.api.restplus import api
-from flanken_api.api.flanken.business import  get_curation_igv_germline, get_curation_igv_somatic, get_curation_svs
+from flanken_api.api.flanken.business import  get_curation_igv_germline, get_curation_igv_somatic, get_curation_svs, post_curation
 from flanken_api.api.flanken.serializers import curation_germline, germline_data_list, somatic_data_list, svs_data_list
 
 log = logging.getLogger(__name__)
@@ -47,8 +47,9 @@ class CurationIgvGermline(Resource):
 
         ```
         """
-        result, errorcode = get_curation_igv_germline()
-        return result, errorcode
+        args = curation_germline_arguments.parse_args()
+        result, errorcode = post_curation(dict(args), 'germline')
+        return result, 200 #result, errorcode
 
 @ns3.route('/igv/somatic')
 @api.response(200, 'Success')
@@ -73,8 +74,9 @@ class CurationIgvSomatic(Resource):
 
         ```
         """
-
-        return '', 200
+        args = curation_somatic_arguments.parse_args()
+        result, errorcode = post_curation(dict(args), 'somatic')
+        return result, errorcode
 
 @ns3.route('/svs')
 @api.response(200, 'Success')
@@ -99,8 +101,9 @@ class CurationSVS(Resource):
 
         ```
         """
-
-        return '', 200
+        args = curation_svs_arguments.parse_args()
+        result, errorcode = post_curation(dict(args), 'svs')
+        return result, errorcode
 
 
 

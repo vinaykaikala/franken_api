@@ -92,6 +92,7 @@ class TableIgvGermline(pssql.Model):
         self.BRCAEx = row_dict.get('BRCAEx', None)
         self.OncoKB = row_dict.get('OncoKB', None)
 
+
     def __repr__(self):
         return "<TableIgvGermline (id='%s', projectid='%s', sdid='%s', captureid='%s')>" % (self.id,self.PROJECT_ID,
                                                                                             self.SDID,self.CAPTURE_ID)
