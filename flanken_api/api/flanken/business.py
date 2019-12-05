@@ -136,7 +136,13 @@ def get_table_qc_header(project_path, sdid, capture_id, header='true'):
 
 def get_table_svs_header(project_path, sdid, capture_id, header='true'):
     "read structural variant file from sdid_annotate_combined_SV.txt and return as json"
-    file_path = project_path + '/' + sdid + '/' + capture_id + '/svs/igv/' +  sdid + '_annotate_combined_SV.txt'
+    file_path = project_path + '/' + sdid + '/' + capture_id + '/svs/igv/'
+
+    file_path = file_path + list(filter(lambda x: (re.match('[-\w]+-CFDNA-[A-Za-z0-9-]+-sv-annotated.txt', x) or
+                                       x.endswith('_annotate_combined_SV.txt'))
+                                      and not x.startswith('.')
+                                      and not x.endswith('.out'),
+                            os.listdir(file_path)))[0]
     data = []
     if os.path.exists(file_path):
         with open(file_path, 'r') as f:
@@ -384,3 +390,38 @@ def get_curation_svs():
     except Exception as e:
         return "Error :" + str(e), 400
 
+
+def get_table_cnv_header(project_path, sdid, capture_id, header='true'):
+    "read qc file from qc_overview.txt and return as json"
+    data = []
+    file_path = project_path + '/' + sdid + '/' + capture_id + '/' + 'cnv/'
+    cnv_filename = file_path + list(filter(lambda x: (re.match('[-\w]+-CFDNA-[A-Za-z0-9-]+.cns', x) )
+                                                     and not x.startswith('.')
+                                                     and not x.endswith('.out'),
+                               os.listdir(file_path)))[0]
+    save_to_cnv_file  = cnv_filename.split('.cns')[0] + '_curated.cns'
+
+    curated_cnv_file =  list(filter(lambda x: ( x.endswith('_curated.cns'))
+                                      and not x.startswith('.')
+                                      and not x.endswith('.out'),
+                            os.listdir(file_path)))
+
+    curated_file_status = True if curated_cnv_file else False
+
+    if curated_file_status:
+        cnv_filename = save_to_cnv_file
+
+    if os.path.exists(cnv_filename):
+        with open(cnv_filename, 'r') as f:
+            reader_ponter = csv.DictReader(f, delimiter ='\t')
+            for each_row in reader_ponter:
+                data.append(dict(each_row))
+            header = generate_headers_ngx_table(data[0].keys())
+            if not any(list(map(lambda x : x in ['CALL', 'COMMENT'], data[0].keys()))):
+                header = [ {'key': 'CALL', 'title': 'CALL'},
+                           {'key': 'COMMENT', 'title': 'COMMENT'}
+                      ] + header
+            return {'header': header, 'data': data, 'filename': save_to_cnv_file, 'status': True}, 200
+
+    else:
+        return {'header': [], 'data': [], 'filename': '', 'status': False}, 400
