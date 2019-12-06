@@ -391,17 +391,27 @@ def get_curation_svs():
         return "Error :" + str(e), 400
 
 
-def get_table_cnv_header(project_path, sdid, capture_id, header='true'):
+def get_table_cnv_header(project_path, sdid, capture_id, variant_type, header='true'):
     "read qc file from qc_overview.txt and return as json"
     data = []
     file_path = project_path + '/' + sdid + '/' + capture_id + '/' + 'cnv/'
-    cnv_filename = file_path + list(filter(lambda x: (re.match('[-\w]+-CFDNA-[A-Za-z0-9-]+.cns', x) )
+    if variant_type == 'somatic':
+        regex = '[-\w]+-CFDNA-[A-Za-z0-9-]+.cns'
+        set_save_file = '_somatic_curated.cns'
+    elif variant_type == 'germline':
+        regex = '^(?:(?!CFDNA).)*.cns$'
+        set_save_file = '_germline_curated.cns'
+    else:
+        return {'header': [], 'data': [], 'filename': '', 'error': 'Invalid end point', 'status': False}, 400
+
+    cnv_filename = file_path + list(filter(lambda x: (re.match(regex, x) )
                                                      and not x.startswith('.')
                                                      and not x.endswith('.out'),
                                os.listdir(file_path)))[0]
-    save_to_cnv_file  = cnv_filename.split('.cns')[0] + '_curated.cns'
 
-    curated_cnv_file =  list(filter(lambda x: ( x.endswith('_curated.cns'))
+    save_to_cnv_file  = cnv_filename.split('.cns')[0] + set_save_file
+
+    curated_cnv_file =  list(filter(lambda x: ( x.endswith(set_save_file))
                                       and not x.startswith('.')
                                       and not x.endswith('.out'),
                             os.listdir(file_path)))
@@ -416,7 +426,12 @@ def get_table_cnv_header(project_path, sdid, capture_id, header='true'):
             reader_ponter = csv.DictReader(f, delimiter ='\t')
             for each_row in reader_ponter:
                 data.append(dict(each_row))
-            header = generate_headers_ngx_table(data[0].keys())
+            # set gene column to end
+            # header = data[0].keys()
+            header = list(data[0])
+            del header[header.index('gene')]
+            header.append('gene')
+            header = generate_headers_ngx_table(header)
             if not any(list(map(lambda x : x in ['CALL', 'COMMENT'], data[0].keys()))):
                 header = [ {'key': 'CALL', 'title': 'CALL'},
                            {'key': 'COMMENT', 'title': 'COMMENT'}
@@ -424,4 +439,4 @@ def get_table_cnv_header(project_path, sdid, capture_id, header='true'):
             return {'header': header, 'data': data, 'filename': save_to_cnv_file, 'status': True}, 200
 
     else:
-        return {'header': [], 'data': [], 'filename': '', 'status': False}, 400
+        return {'header': [], 'data': [], 'filename': '', 'error': 'Invalid file', 'status': False}, 400

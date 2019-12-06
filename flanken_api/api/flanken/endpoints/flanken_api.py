@@ -223,12 +223,12 @@ class TableQc(Resource):
         result, errorcode = get_table_qc_header(current_app.config[args['project_name']], args['sdid'], args['capture_id'], args['header'])
         return result, errorcode
 
-@ns.route('/table/cnv')
+@ns.route('/table/cnv/<string:variant_type>')
 @api.response(200, 'CNV Metrics')
 @api.response(400, '/nfs is not mount locally no data found')
 class TableCNV(Resource):
     @api.expect(table_cnv_arguments, validate=True)
-    def get(self):
+    def get(self, variant_type):
         """
         Returns All QC Metrics For Samples .
         ```
@@ -243,7 +243,7 @@ class TableCNV(Resource):
         ```
         """
         args = table_cnv_arguments.parse_args()
-        result, errorcode = get_table_cnv_header(current_app.config[args['project_name']], args['sdid'], args['capture_id'], args['header'])
+        result, errorcode = get_table_cnv_header(current_app.config[args['project_name']], args['sdid'], args['capture_id'], variant_type, args['header'])
         return result, errorcode
 
 
