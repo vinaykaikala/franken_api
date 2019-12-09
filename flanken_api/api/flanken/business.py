@@ -124,9 +124,10 @@ def get_table_qc_header(project_path, sdid, capture_id, header='true'):
             for each_row in reader_ponter:
                 data.append(dict(each_row))
             header = generate_headers_ngx_table(data[0].keys())
-            if not any(list(map(lambda x : x in ['PURITY', 'PLOIDY'], data[0].keys()))):
+            if not any(list(map(lambda x : x in ['PURITY', 'PLOIDY', 'CHIP'], data[0].keys()))):
                 header = [ {'key': 'PURITY', 'title': 'PURITY'},
-                           {'key': 'PLOIDY', 'title': 'PLOIDY'}
+                           {'key': 'PLOIDY', 'title': 'PLOIDY'},
+                           {'key': 'CHIP', 'title': 'CHIP'}
                       ] + header
             return {'header': header, 'data': data, 'filename': qc_filename, 'status': True}, 200
 
