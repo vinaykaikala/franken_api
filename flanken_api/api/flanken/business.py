@@ -289,7 +289,7 @@ def pdfs_files(variant_type, project_path, sdid, capture_id):
     return file_path, 400
 
 def check_curation_germline_record(table, record):
-    return bool(table.query.filter(table.PROJECT_ID==record['PROJECT_ID'],
+    return table.query.filter(table.PROJECT_ID==record['PROJECT_ID'],
                                    table.SDID == record['SDID'],
                                    table.CAPTURE_ID == record['CAPTURE_ID'],
                                    table.CHROM == record['CHROM'],
@@ -297,10 +297,10 @@ def check_curation_germline_record(table, record):
                                    table.END == record['END'],
                                    table.REF == record['REF'],
                                    table.ALT == record['ALT']
-                                   ).first())
+                                   ).first()
 
 def check_curation_somatic_record(table, record):
-    return bool(table.query.filter(table.PROJECT_ID==record['PROJECT_ID'],
+    return table.query.filter(table.PROJECT_ID==record['PROJECT_ID'],
                                    table.SDID == record['SDID'],
                                    table.CAPTURE_ID == record['CAPTURE_ID'],
                                    table.Chromosome == record['CHROM'],
@@ -308,11 +308,11 @@ def check_curation_somatic_record(table, record):
                                    table.Stop == record['STOP'],
                                    table.Reference == record['REF'],
                                    table.Variant == record['ALT']
-                                   ).first())
+                                   ).first()
 
 
 def check_curation_svs_record(table, record):
-    return bool(table.query.filter(table.PROJECT_ID==record['PROJECT_ID'],
+    return table.query.filter(table.PROJECT_ID==record['PROJECT_ID'],
                                    table.SDID == record['SDID'],
                                    table.CAPTURE_ID == record['CAPTURE_ID'],
                                    table.CHROM_A == record['CHROM_A'],
@@ -320,7 +320,7 @@ def check_curation_svs_record(table, record):
                                    table.END_A == record['END_A'],
                                    table.CHROM_B == record['CHROM_B'],
                                    table.START_B == record['START_B']
-                                   ).first())
+                                   ).first()
 
 def post_curation(record, table_name):
     try:
@@ -335,13 +335,20 @@ def post_curation(record, table_name):
             'svs': check_curation_svs_record
         }
 
-        if not func_dict[table_name](tables_dict[table_name], record ):
+        current_record = func_dict[table_name](tables_dict[table_name], record )
+
+        if not bool(current_record):
             obj_germline = tables_dict[table_name](record)
             db.session.add(obj_germline)
             db.session.commit()
             return {'status': True, 'error': ''}, 200
         else:
-            return {'status': False, 'error': 'Record Exists...'}, 400
+            for each_column in current_record:
+                current_record[each_column] = record[each_column]
+
+            db.session.add(current_record)
+            db.session.commit()
+            return {'status': True, 'error': ''}, 200
     except Exception as e :
         return {'status': False, 'error': str(e)}, 400
 
