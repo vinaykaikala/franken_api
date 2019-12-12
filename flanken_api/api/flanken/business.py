@@ -303,11 +303,11 @@ def check_curation_somatic_record(table, record):
     return bool(table.query.filter(table.PROJECT_ID==record['PROJECT_ID'],
                                    table.SDID == record['SDID'],
                                    table.CAPTURE_ID == record['CAPTURE_ID'],
-                                   table.Chromosome == record['Chromosome'],
-                                   table.Start == record['Start'],
-                                   table.Stop == record['Stop'],
-                                   table.Reference == record['Reference'],
-                                   table.Variant == record['Variant']
+                                   table.Chromosome == record['CHROM'],
+                                   table.Start == record['START'],
+                                   table.Stop == record['STOP'],
+                                   table.Reference == record['REF'],
+                                   table.Variant == record['ALT']
                                    ).first())
 
 
@@ -362,8 +362,8 @@ def get_curation_igv_germline():
 
 def get_curation_igv_somatic():
     try:
-        header = ['PROJECT_ID', 'SDID', 'CAPTURE_ID', "Chromosome", 'Start', 'Stop',
-                    'Reference', 'Variant', 'Call', 'Tags', 'Notes', 'GENE', 'IMPACT',
+        header = ['PROJECT_ID', 'SDID', 'CAPTURE_ID', "CHROM", 'START', 'STOP',
+                    'REF', 'ALT', 'CALL', 'TAG', 'NOTES', 'GENE', 'IMPACT',
                   'CONSEQUENCE', 'HGVSp', 'T_DP', 'T_ALT', 'T_VAF', 'N_DP', 'N_ALT', 'N_VAF',
                   'CLIN_SIG', 'gnomAD', 'BRCAEx', 'OncoKB']
         try:
