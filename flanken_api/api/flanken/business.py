@@ -303,11 +303,11 @@ def check_curation_somatic_record(table, record):
     return table.query.filter(table.PROJECT_ID==record['PROJECT_ID'],
                                    table.SDID == record['SDID'],
                                    table.CAPTURE_ID == record['CAPTURE_ID'],
-                                   table.Chromosome == record['CHROM'],
-                                   table.Start == record['START'],
-                                   table.Stop == record['END'],
-                                   table.Reference == record['REF'],
-                                   table.Variant == record['ALT']
+                                   table.CHROM == record['CHROM'],
+                                   table.START == record['START'],
+                                   table.END == record['END'],
+                                   table.REF == record['REF'],
+                                   table.ALT == record['ALT']
                                    ).first()
 
 
