@@ -84,7 +84,7 @@ curation_somatic_arguments.add_argument('SDID' , type=str, required=True, help="
 curation_somatic_arguments.add_argument('CAPTURE_ID' , type=str, required=True, help="")
 curation_somatic_arguments.add_argument('CHROM', type=str, required=True, help="")
 curation_somatic_arguments.add_argument('START', type=str, required=True, help="")
-curation_somatic_arguments.add_argument('STOP', type=str, required=True, help="")
+curation_somatic_arguments.add_argument('END', type=str, required=True, help="")
 curation_somatic_arguments.add_argument('REF', type=str, required=True, help="")
 curation_somatic_arguments.add_argument('ALT', type=str, required=True, help="")
 curation_somatic_arguments.add_argument('CALL', type=str,  help="")
