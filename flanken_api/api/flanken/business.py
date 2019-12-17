@@ -441,8 +441,8 @@ def get_table_cnv_header(project_path, sdid, capture_id, variant_type, header='t
             del header[header.index('gene')]
             header.append('gene')
             header = generate_headers_ngx_table(header)
-            if not any(list(map(lambda x : x in ['CALL', 'COMMENT'], data[0].keys()))):
-                header = [ {'key': 'CALL', 'title': 'CALL'},
+            if not any(list(map(lambda x : x in ['ASSESSMENT', 'COMMENT'], data[0].keys()))):
+                header = [ {'key': 'ASSESSMENT', 'title': 'ASSESSMENT'},
                            {'key': 'COMMENT', 'title': 'COMMENT'}
                       ] + header
             return {'header': header, 'data': data, 'filename': save_to_cnv_file, 'status': True}, 200
