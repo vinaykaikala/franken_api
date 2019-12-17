@@ -104,6 +104,8 @@ curation_somatic_arguments.add_argument('CLIN_SIG', type=str,  help="")
 curation_somatic_arguments.add_argument('gnomAD', type=str,  help="")
 curation_somatic_arguments.add_argument('BRCAEx' , type=str,  help="")
 curation_somatic_arguments.add_argument('OncoKB' , type=str,  help="")
+curation_somatic_arguments.add_argument('ASSESSMENT' , type=str,  help="")
+curation_somatic_arguments.add_argument('CLONALITY' , type=str,  help="")
 
 curation_svs_arguments = reqparse.RequestParser()
 curation_svs_arguments.add_argument('PROJECT_ID', type=str, required=True, help="")

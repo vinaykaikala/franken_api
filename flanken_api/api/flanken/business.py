@@ -370,7 +370,7 @@ def get_curation_igv_germline():
 def get_curation_igv_somatic():
     try:
         header = ['PROJECT_ID', 'SDID', 'CAPTURE_ID', "CHROM", 'START', 'END',
-                    'REF', 'ALT', 'CALL', 'TAG', 'NOTES', 'GENE', 'IMPACT',
+                    'REF', 'ALT', 'CALL', 'TAG', 'NOTES', 'ASSESSMENT', 'CLONALITY',  'GENE', 'IMPACT',
                   'CONSEQUENCE', 'HGVSp', 'T_DP', 'T_ALT', 'T_VAF', 'N_DP', 'N_ALT', 'N_VAF',
                   'CLIN_SIG', 'gnomAD', 'BRCAEx', 'OncoKB']
         try:
