@@ -15,6 +15,7 @@ import re
 import ast
 from flask import jsonify
 import subprocess
+from collections import OrderedDict
 
 def run_cmd(cmd):
     "Run external commands"
@@ -211,7 +212,8 @@ def save_igvnav_input_file(filename, data):
     "save the igvnav input file with updated calls and tags column"
     try:
         with open(filename, 'w') as fpw:
-            headers = data[0].keys()
+            #headers = data[0].keys()
+            headers = list(OrderedDict.fromkeys([k for i in data for k in i.keys()]))
             writer = csv.DictWriter(fpw, fieldnames=headers, delimiter='\t' )
             writer.writeheader()
             for each_row in data:
