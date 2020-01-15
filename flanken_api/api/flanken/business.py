@@ -124,12 +124,22 @@ def get_table_qc_header(project_path, sdid, capture_id, header='true'):
             reader_ponter = csv.DictReader(f, delimiter ='\t')
             for each_row in reader_ponter:
                 data.append(dict(each_row))
-            header = generate_headers_ngx_table(data[0].keys())
-            if not any(list(map(lambda x : x in ['PURITY', 'PLOIDY', 'CHIP'], data[0].keys()))):
-                header = [ {'key': 'PURITY', 'title': 'PURITY'},
-                           {'key': 'PLOIDY', 'title': 'PLOIDY'},
-                           {'key': 'CHIP', 'title': 'CHIP'}
-                      ] + header
+            header = list(generate_headers_ngx_table(data[0].keys()))
+            new_keys = {
+                'PURITY': {'key': 'PURITY', 'title': 'PURITY'},
+                'PLOIDY': {'key': 'PLOIDY', 'title': 'PLOIDY'},
+                'CHIP': {'key': 'CHIP', 'title': 'CHIP'}
+            }
+
+            for each_new_key in new_keys:
+                if each_new_key not in header:
+                    header.inser(0, new_keys[each_new_key])
+
+            #if not any(list(map(lambda x : x in ['PURITY', 'PLOIDY', 'CHIP'], data[0].keys()))):
+             #   header = [ {'key': 'PURITY', 'title': 'PURITY'},
+             #              {'key': 'PLOIDY', 'title': 'PLOIDY'},
+              #             {'key': 'CHIP', 'title': 'CHIP'}
+              #        ] + header
             return {'header': header, 'data': data, 'filename': qc_filename, 'status': True}, 200
 
     else:
@@ -153,13 +163,24 @@ def get_table_svs_header(project_path, sdid, capture_id, header='true'):
                 data.append(dict(each_row))
 
             #header = generate_headers_table_sv(data[0].keys())
-            header = generate_headers_ngx_table(data[0].keys())
+            header = list(generate_headers_ngx_table(data[0].keys()))
             #Add additional columns to SV  [CALL(True | False):  TYPE:(Somatic| germline) and comment columns]
-            if not any(list(map(lambda x: x in ['CALL', 'TYPE', 'SECONDHIT', 'COMMENT'], data[0].keys()))):
-                header = [{'key': 'CALL', 'title': 'CALL'},
-                            {'key': 'TYPE', 'title': 'TYPE'},
-                            {'key': 'SECONDHIT', 'title': 'SECONDHIT'},
-                            {'key': 'COMMENT', 'title': 'COMMENT'}] + header
+
+            new_keys = {
+                'CALL': {'key': 'CALL', 'title': 'CALL'},
+                'TYPE': {'key': 'TYPE', 'title': 'TYPE'},
+                'SECONDHIT': {'key': 'SECONDHIT', 'title': 'SECONDHIT'},
+                'COMMENT': {'key': 'COMMENT', 'title': 'COMMENT'}
+            }
+            for each_new_key in new_keys:
+                if each_new_key not in header:
+                    header.inser(0, new_keys[each_new_key])
+
+            #if not any(list(map(lambda x: x in ['CALL', 'TYPE', 'SECONDHIT', 'COMMENT'], data[0].keys()))):
+             #   header = [{'key': 'CALL', 'title': 'CALL'},
+             #               {'key': 'TYPE', 'title': 'TYPE'},
+             #               {'key': 'SECONDHIT', 'title': 'SECONDHIT'},
+             #               {'key': 'COMMENT', 'title': 'COMMENT'}] + header
 
             return {'header': header, 'data': data, 'filename': file_path, 'status': True}, 200
 
@@ -443,10 +464,20 @@ def get_table_cnv_header(project_path, sdid, capture_id, variant_type, header='t
             del header[header.index('gene')]
             header.append('gene')
             header = generate_headers_ngx_table(header)
-            if not any(list(map(lambda x : x in ['ASSESSMENT', 'COMMENT'], data[0].keys()))):
-                header = [ {'key': 'ASSESSMENT', 'title': 'ASSESSMENT'},
-                           {'key': 'COMMENT', 'title': 'COMMENT'}
-                      ] + header
+            new_keys = {
+               'ABSOLUTE_COPY_NUMBER': {'key': 'ABSOLUTE_COPY_NUMBER', 'title': 'ABSOLUTE_COPY_NUMBER'},
+               'ASSESSMENT': {'key': 'ASSESSMENT', 'title': 'ASSESSMENT'},
+               'COMMENT':  {'key': 'COMMENT', 'title': 'COMMENT'}
+            }
+
+            for each_new_key in new_keys:
+                if each_new_key not in header:
+                    header.inser(0, new_keys[each_new_key])
+
+            #if not any(list(map(lambda x : x in ['ABSOLUTE_COPY_NUMBER', 'ASSESSMENT', 'COMMENT'], data[0].keys()))):
+            #    header = [ {'key': 'ASSESSMENT', 'title': 'ASSESSMENT'},
+            #               {'key': 'COMMENT', 'title': 'COMMENT'}
+            #          ] + header
             return {'header': header, 'data': data, 'filename': save_to_cnv_file, 'status': True}, 200
 
     else:
