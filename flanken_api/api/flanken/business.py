@@ -133,7 +133,7 @@ def get_table_qc_header(project_path, sdid, capture_id, header='true'):
 
             for each_new_key in new_keys:
                 if each_new_key not in header:
-                    header.inser(0, new_keys[each_new_key])
+                    header.insert(0, new_keys[each_new_key])
 
             #if not any(list(map(lambda x : x in ['PURITY', 'PLOIDY', 'CHIP'], data[0].keys()))):
              #   header = [ {'key': 'PURITY', 'title': 'PURITY'},
@@ -174,7 +174,7 @@ def get_table_svs_header(project_path, sdid, capture_id, header='true'):
             }
             for each_new_key in new_keys:
                 if each_new_key not in header:
-                    header.inser(0, new_keys[each_new_key])
+                    header.insert(0, new_keys[each_new_key])
 
             #if not any(list(map(lambda x: x in ['CALL', 'TYPE', 'SECONDHIT', 'COMMENT'], data[0].keys()))):
              #   header = [{'key': 'CALL', 'title': 'CALL'},
@@ -472,7 +472,7 @@ def get_table_cnv_header(project_path, sdid, capture_id, variant_type, header='t
 
             for each_new_key in new_keys:
                 if each_new_key not in header:
-                    header.inser(0, new_keys[each_new_key])
+                    header.insert(0, new_keys[each_new_key])
 
             #if not any(list(map(lambda x : x in ['ABSOLUTE_COPY_NUMBER', 'ASSESSMENT', 'COMMENT'], data[0].keys()))):
             #    header = [ {'key': 'ASSESSMENT', 'title': 'ASSESSMENT'},
