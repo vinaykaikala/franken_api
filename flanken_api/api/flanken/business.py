@@ -122,8 +122,12 @@ def get_table_qc_header(project_path, sdid, capture_id, header='true'):
     if os.path.exists(qc_filename):
         with open(qc_filename, 'r') as f:
             reader_ponter = csv.DictReader(f, delimiter ='\t')
-            for each_row in reader_ponter:
-                data.append(dict(each_row))
+            #for each_row in reader_ponter:
+            #    data.append(dict(each_row))
+            for i, each_row in enumerate(reader_ponter):
+                each_row = dict(each_row)
+                each_row['indexs'] = i
+                data.append(each_row)
             header = list(generate_headers_ngx_table(data[0].keys()))
             new_keys = {
                 'PURITY': {'key': 'PURITY', 'title': 'PURITY'},
@@ -159,9 +163,12 @@ def get_table_svs_header(project_path, sdid, capture_id, header='true'):
     if os.path.exists(file_path):
         with open(file_path, 'r') as f:
             reader_ponter = csv.DictReader(f, delimiter ='\t')
-            for each_row in reader_ponter:
-                data.append(dict(each_row))
-
+            #for each_row in reader_ponter:
+            #    data.append(dict(each_row))
+            for i, each_row in enumerate(reader_ponter):
+                each_row = dict(each_row)
+                each_row['indexs'] = i
+                data.append(each_row)
             #header = generate_headers_table_sv(data[0].keys())
             header = list(generate_headers_ngx_table(data[0].keys()))
             #Add additional columns to SV  [CALL(True | False):  TYPE:(Somatic| germline) and comment columns]
@@ -209,9 +216,12 @@ def get_table_igv(variant_type, project_path, sdid, capture_id, header='true'):
         igv_nav_file = file_path + '/' + igv_nav_file
         with open(igv_nav_file, 'r') as f:
             reader_pointer = csv.DictReader(f, delimiter='\t')
-            for each_row in reader_pointer:
+            #for each_row in reader_pointer:
+            #   each_row = dict(each_row)
+            #    print(each_row)
+            for i, each_row in enumerate(reader_pointer):
                 each_row = dict(each_row)
-                print(each_row)
+                each_row['indexs'] = i
                 if None in each_row:
                     if isinstance(each_row[None], list):
                         for i, each_none in enumerate(each_row[None]):
@@ -456,8 +466,10 @@ def get_table_cnv_header(project_path, sdid, capture_id, variant_type, header='t
     if os.path.exists(cnv_filename):
         with open(cnv_filename, 'r') as f:
             reader_ponter = csv.DictReader(f, delimiter ='\t')
-            for each_row in reader_ponter:
-                data.append(dict(each_row))
+            for i, each_row in enumerate(reader_ponter):
+                each_row = dict(each_row)
+                each_row['indexs'] = i
+                data.append(each_row)
             # set gene column to end
             # header = data[0].keys()
             header = list(data[0])
