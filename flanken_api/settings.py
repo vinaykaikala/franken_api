@@ -18,5 +18,6 @@ SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 #path to flanken json files
 MOUNT_POINT_PROBIO = '/nfs/PROBIO/autoseq-output'
-MOUNT_POINT_PSFF = '/nfs/CLINSEQ/PSFF/autoseq-output'
+#MOUNT_POINT_PSFF = '/nfs/CLINSEQ/PSFF/autoseq-output'
+MOUNT_POINT_PSFF = '/nfs/PSFF/autoseq-output'
 #       MOUNT_POINT = '/home/kaikala/test/PROBIO/autoseq-output'

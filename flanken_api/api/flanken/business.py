@@ -130,14 +130,17 @@ def get_table_qc_header(project_path, sdid, capture_id, header='true'):
                 data.append(each_row)
             header = list(generate_headers_ngx_table(data[0].keys()))
             new_keys = {
+                'CHIP': {'key': 'CHIP', 'title': 'CHIP'},    
                 'PURITY': {'key': 'PURITY', 'title': 'PURITY'},
                 'PLOIDY': {'key': 'PLOIDY', 'title': 'PLOIDY'},
-                'CHIP': {'key': 'CHIP', 'title': 'CHIP'}
+                'Overall_QC': {'key': 'Overall_QC', 'title': 'Overall_QC'},
+                'Comment': {'key': 'Comment', 'title': 'Comment'}
             }
 
             for each_new_key in new_keys:
                 if each_new_key not in header:
-                    header.insert(0, new_keys[each_new_key])
+                    #header.insert(0, new_keys[each_new_key])
+                    header.append(new_keys[each_new_key])
 
             #if not any(list(map(lambda x : x in ['PURITY', 'PLOIDY', 'CHIP'], data[0].keys()))):
              #   header = [ {'key': 'PURITY', 'title': 'PURITY'},
