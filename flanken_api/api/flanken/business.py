@@ -480,6 +480,14 @@ def get_table_cnv_header(project_path, sdid, capture_id, variant_type, header='t
             # set gene column to end
             # header = data[0].keys()
             header = list(data[0])
+            #compute size for cnv using start and end
+            if 'SIZE' not in header:
+                end_index = header.index('end') + 1
+                header.insert(end_index, 'SIZE')
+                for data_dict in data:
+                    size = int(data_dict['end']) - int(data_dict['start']) + 1
+                    data_dict['SIZE'] = str(size)
+
             del header[header.index('gene')]
             header.append('gene')
             header = generate_headers_ngx_table(header)
@@ -488,6 +496,14 @@ def get_table_cnv_header(project_path, sdid, capture_id, variant_type, header='t
                'ASSESSMENT': {'key': 'ASSESSMENT', 'title': 'ASSESSMENT'},
                'COMMENT':  {'key': 'COMMENT', 'title': 'COMMENT'}
             }
+
+            #compute size for cnv using start and end
+            #if not 'size'
+            #start_index = header.index('size')
+            #end_index = header.index('end')
+            #for data_array in data:
+            #    size = data_array[end_index] - data_array[start_index]
+
 
             for each_new_key in new_keys:
                 if each_new_key not in header:
