@@ -1,5 +1,6 @@
 import logging.config
 import click
+from werkzeug.utils import cached_property
 from flask import Flask, Blueprint
 
 from flanken_api import settings
