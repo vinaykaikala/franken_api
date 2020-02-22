@@ -47,3 +47,5 @@ Werkzeug==0.16.1
 werkzeug==0.16.1
 zipp==0.5.2
 psycopg2
+flask-migrate
+flask_script
