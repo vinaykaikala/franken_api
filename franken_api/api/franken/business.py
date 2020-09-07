@@ -110,7 +110,7 @@ def generate_headers_table_sv(headers):
 def generate_headers_ngx_table(headers):
     columns= []
     for each_head in headers:
-          columns.append({ 'key': each_head.upper() ,'title':each_head.upper()})
+          columns.append({ 'key': each_head,'title':each_head.upper()})
     return columns
 
 
