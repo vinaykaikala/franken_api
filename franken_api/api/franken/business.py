@@ -166,6 +166,7 @@ def get_table_svs_header(project_path, sdid, capture_id, header='true'):
                             os.listdir(file_path)))[0]
     data = []
     if os.path.exists(file_path):
+        
         df = pd.read_csv(file_path,delimiter="\t", header=0)
         column_list = list(df.columns)
         
@@ -173,6 +174,9 @@ def get_table_svs_header(project_path, sdid, capture_id, header='true'):
         df_sorted = df.sort_values(["GENE_A-GENE_B-sorted","CHROM_A","START_A","CHROM_B","START_B","TOOL","SUPPORT_READS"], ascending = (True,False,False,False,False,False,False))
         df_filter = df_sorted.loc[(df['IN_DESIGN_A'] == 'YES') | (df['IN_DESIGN_B'] == 'YES')]
         
+        # Add Index column in the dataframe
+        df_filter['indexs'] = df_filter.reset_index()
+
         result = df_filter.to_json(orient="records")
         data = json.loads(result)
         
@@ -190,7 +194,7 @@ def get_table_svs_header(project_path, sdid, capture_id, header='true'):
                 header.insert(0, new_keys[each_new_key])
 
         return {'header': header, 'data': data, 'filename': file_path, 'status': True}, 200
-
+        
         #====== Start : Old code for structural variant ===========#
         '''
         with open(file_path, 'r') as f:
