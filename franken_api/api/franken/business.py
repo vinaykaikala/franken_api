@@ -267,6 +267,15 @@ def get_table_igv(variant_type, project_path, sdid, capture_id, header='true'):
 
         #header = generate_headers_table_sv(data[0].keys())
         header = generate_headers_ngx_table(data[0].keys())
+
+        if variant_type == 'somatic':
+            new_keys = {
+                'HOTSPOT': {'key': 'HOTSPOT', 'title': 'HOTSPOT'}
+            }
+            for each_new_key in new_keys:
+                if each_new_key not in header:
+                    header.insert(11, new_keys[each_new_key])
+                
         return {'header': header, 'data': data, 'filename' : igv_nav_file, 'status': True}, 200
 
     except Exception as e:
