@@ -135,8 +135,8 @@ def get_table_qc_header(project_path, sdid, capture_id, header='true'):
                 'CHIP': {'key': 'CHIP', 'title': 'CHIP'},    
                 'PURITY': {'key': 'PURITY', 'title': 'PURITY'},
                 'PLOIDY': {'key': 'PLOIDY', 'title': 'PLOIDY'},
-                'Overall_QC': {'key': 'Overall_QC', 'title': 'OVERALL QC'},
-                'COMMENT': {'key': 'COMMENT', 'title': 'COMMENT'}
+                'Overall_QC': {'key': 'Overall_QC', 'title': 'Overall_QC'},
+                'Comment': {'key': 'Comment', 'title': 'Comment'}
             }
 
             for each_new_key in new_keys:
