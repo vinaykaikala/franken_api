@@ -168,14 +168,15 @@ def get_table_svs_header(project_path, sdid, capture_id, header='true'):
     if os.path.exists(file_path):
         
         df = pd.read_csv(file_path,delimiter="\t")
-        # column_list = list(df.columns)
-        
+       
         # Dataframe soted based on the below columns
         df_sorted = df.sort_values(["GENE_A-GENE_B-sorted","CHROM_A","START_A","CHROM_B","START_B","TOOL","SUPPORT_READS"], ascending = (True,False,False,False,False,False,False))
         df_filter = df_sorted.loc[(df['IN_DESIGN_A'] == 'YES') | (df['IN_DESIGN_B'] == 'YES')]
         
         # Add Index column in the dataframe
-        df_filter['indexs'] = df_filter.reset_index()
+        if 'indexs' not in df_filter.columns:
+            df_filter['indexs'] = df_filter.index
+
         column_list = list(df_filter.columns)
 
         result = df_filter.to_json(orient="records")
@@ -227,7 +228,7 @@ def get_table_svs_header(project_path, sdid, capture_id, header='true'):
              #               {'key': 'COMMENT', 'title': 'COMMENT'}] + header
 
             return {'header': header, 'data': data, 'filename': file_path, 'status': True}, 200
-        '''
+            '''
         #====== End : Old code for structural variant ===========#
 
     else:
