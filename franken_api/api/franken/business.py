@@ -131,6 +131,7 @@ def get_table_qc_header(project_path, sdid, capture_id, header='true'):
                 each_row['indexs'] = i
                 data.append(each_row)
             header = list(generate_headers_ngx_table(data[0].keys()))
+
             new_keys = {
                 'CHIP': {'key': 'CHIP', 'title': 'CHIP'},    
                 'PURITY': {'key': 'PURITY', 'title': 'PURITY'},
@@ -139,16 +140,11 @@ def get_table_qc_header(project_path, sdid, capture_id, header='true'):
                 'Comment': {'key': 'Comment', 'title': 'Comment'}
             }
 
-            for each_new_key in new_keys:
-                if each_new_key not in header:
-                    #header.insert(0, new_keys[each_new_key])
-                    header.append(new_keys[each_new_key])
+            for idx,value in enumerate(new_keys):
+                n_key = [item for item in header if item.get('key')==value]
+                if(not n_key):
+                    header.append(new_keys[value])  
 
-            #if not any(list(map(lambda x : x in ['PURITY', 'PLOIDY', 'CHIP'], data[0].keys()))):
-             #   header = [ {'key': 'PURITY', 'title': 'PURITY'},
-             #              {'key': 'PLOIDY', 'title': 'PLOIDY'},
-              #             {'key': 'CHIP', 'title': 'CHIP'}
-              #        ] + header
             return {'header': header, 'data': data, 'filename': qc_filename, 'status': True}, 200
 
     else:
@@ -523,8 +519,7 @@ def get_table_cnv_header(project_path, sdid, capture_id, variant_type, header='t
                 each_row = dict(each_row)
                 each_row['indexs'] = i
                 data.append(each_row)
-            # set gene column to end
-            # header = data[0].keys()
+
             header = list(data[0])
             #compute size for cnv using start and end
             if 'SIZE' not in header:
@@ -534,31 +529,40 @@ def get_table_cnv_header(project_path, sdid, capture_id, variant_type, header='t
                     size = int(data_dict['end']) - int(data_dict['start']) + 1
                     data_dict['SIZE'] = str(size)
 
+            acn_key = 'ABSOLUTE_COPY_NUMBER'
+            ass_key = 'ASSESSMENT'
+            com_key = 'COMMENT'
+
+            if acn_key in header:
+                acn_indx = header.index(acn_key)
+                del header[acn_indx]
+                header.insert(0,acn_key)
+
+            if ass_key in header:
+                ass_indx = header.index(ass_key)
+                del header[ass_indx]
+                header.insert(0,ass_key)
+
+            if com_key in header:
+                com_indx = header.index(com_key)
+                del header[com_indx]
+                header.insert(0,com_key)
+            
             del header[header.index('gene')]
             header.append('gene')
             header = generate_headers_ngx_table(header)
+
             new_keys = {
-               'ABSOLUTE_COPY_NUMBER': {'key': 'ABSOLUTE_COPY_NUMBER', 'title': 'ABSOLUTE_COPY_NUMBER'},
-               'ASSESSMENT': {'key': 'ASSESSMENT', 'title': 'ASSESSMENT'},
-               'COMMENT':  {'key': 'COMMENT', 'title': 'COMMENT'}
+               acn_key: {'key': acn_key, 'title': 'ABSOLUTE_COPY_NUMBER'},
+               ass_key: {'key': ass_key, 'title': 'ASSESSMENT'},
+               com_key :  {'key': com_key, 'title': 'COMMENT'}
             }
 
-            #compute size for cnv using start and end
-            #if not 'size'
-            #start_index = header.index('size')
-            #end_index = header.index('end')
-            #for data_array in data:
-            #    size = data_array[end_index] - data_array[start_index]
+            for idx,value in enumerate(new_keys):
+                n_key = [item for item in header if item.get('key')==value]
+                if(not n_key):
+                    header.insert(0, new_keys[value])
 
-
-            for each_new_key in new_keys:
-                if each_new_key not in header:
-                    header.insert(0, new_keys[each_new_key])
-
-            #if not any(list(map(lambda x : x in ['ABSOLUTE_COPY_NUMBER', 'ASSESSMENT', 'COMMENT'], data[0].keys()))):
-            #    header = [ {'key': 'ASSESSMENT', 'title': 'ASSESSMENT'},
-            #               {'key': 'COMMENT', 'title': 'COMMENT'}
-            #          ] + header
             return {'header': header, 'data': data, 'filename': save_to_cnv_file, 'status': True}, 200
 
     else:
