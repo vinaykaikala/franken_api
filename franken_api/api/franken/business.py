@@ -18,6 +18,35 @@ import subprocess
 from collections import OrderedDict
 import pandas as pd
 
+
+# check the string contains special character or not 
+def check_special_char(seq_str):
+    result = any(not c.isalnum() for c in seq_str)
+    return result
+
+# split the sequence into three letter and convert into one letter
+def get_three_to_one_amino_code(code_seq):
+    amino_code_dict = {'CYS': 'C', 'ASP': 'D', 'SER': 'S', 'GLN': 'Q', 'LYS': 'K',
+     'ILE': 'I', 'PRO': 'P', 'THR': 'T', 'PHE': 'F', 'ASN': 'N', 
+     'GLY': 'G', 'HIS': 'H', 'LEU': 'L', 'ARG': 'R', 'TRP': 'W', 
+     'ALA': 'A', 'VAL':'V', 'GLU': 'E', 'TYR': 'Y', 'MET': 'M'}
+
+    one_code_res = ''
+    
+    # split the code based on digit and special character
+    three_code = re.split('([0-9]+|[a-zA-Z \s\n\.]+)', code_seq)
+    three_code = [i for i in three_code if i]
+    
+    for c in three_code:
+        validate_seq = check_special_char(c)
+        if(not validate_seq):
+            if not c.isdigit() and c.upper() in amino_code_dict:
+                code = amino_code_dict[c.upper()]
+                c = code
+        one_code_res = one_code_res + c
+    
+    return one_code_res
+    
 def run_cmd(cmd):
     "Run external commands"
     return subprocess.check_output(cmd, shell=True).decode('utf-8')
@@ -230,6 +259,7 @@ def get_table_svs_header(project_path, sdid, capture_id, header='true'):
     else:
         return {'header': [], 'data': [], 'filename': '', 'status': False}, 400
 
+
 def get_table_igv(variant_type, project_path, sdid, capture_id, header='true'):
     "read  variant file for given sdid and return as json"
 
@@ -258,6 +288,9 @@ def get_table_igv(variant_type, project_path, sdid, capture_id, header='true'):
             for i, each_row in enumerate(reader_pointer):
                 each_row = dict(each_row)
                 each_row['indexs'] = i
+                if each_row['HGVSp']:
+                    one_amino_code = get_three_to_one_amino_code(each_row['HGVSp'].split("p.")[1])
+                    each_row['HGVSp'] = one_amino_code
                 if None in each_row:
                     if isinstance(each_row[None], list):
                         for i, each_none in enumerate(each_row[None]):
